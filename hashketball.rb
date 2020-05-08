@@ -1,4 +1,5 @@
-# Write your code below game_hash
+require "pry"
+
 def game_hash
   {
     home: {
@@ -126,4 +127,68 @@ def game_hash
   }
 end
 
-# Write code here
+def get_player_stats(stats, player_name)
+  stats.each do |origin, team_stats|
+    team_stats[:players].each do |player_stats|
+      return player_stats if player_stats[:player_name] == player_name
+    end 
+  end 
+end 
+
+def stat_lookup(player_name, stat)
+  stats = game_hash()
+  player_stats = get_player_stats(stats, player_name)
+  player_stats[stat]
+end
+
+def num_points_scored(player_name)
+  stat_lookup(player_name, :points)
+end 
+
+def shoe_size(player_name)
+  stat_lookup(player_name, :shoe)
+end 
+
+def find_team_loc(stats, team_name)
+  stats[:home][:team_name] == team_name ? :home : :away
+end 
+
+def team_colors(team_name)
+  stats = game_hash()
+  location = find_team_loc(stats, team_name)
+  stats[location][:colors]
+end 
+
+def team_names()
+  stats = game_hash()
+  [stats[:home][:team_name], stats[:away][:team_name]]
+end 
+
+def player_numbers(team_name) 
+  stats = game_hash()
+  location = find_team_loc(stats, team_name)
+  numbers = stats[location][:players].collect do |player_stats| 
+    player_stats[:number]
+  end 
+end 
+
+def player_stats(player_name)
+  stats = game_hash()
+  get_player_stats(stats, player_name)
+end 
+
+def best_stat_player(game_stats, stat)
+  best_stat = nil
+  game_stats.each do |loc, team_stats|
+    team_stats[:players].each do |player_stat|
+      best_stat = player_stat if best_stat == nil || player_stat[stat] > best_stat[stat]
+    end 
+  end 
+  best_stat
+end 
+
+def big_shoe_rebounds()
+  game_stats = game_hash()
+  player_stat = best_stat_player(game_stats, :shoe)
+  player_stat[:rebounds]
+end 
